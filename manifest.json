@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Youtube Chrome Extension",
+  "version": "1.0.0",
+  "description": "Youtube Chrome Extension",
+  "icons": {
+    "128": "icons/128x128.png",
+    "48": "icons/48x48.png",
+    "16": "icons/16x16.png"
+  },
+  "browser_action": {
+    "default_icon": "icons/16x16.png",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/watch*"],
+      "css": ["css/page.css"],
+      "js": ["js/jquery-3.3.1.min.js", "js/page.js"]
+    }
+  ]
+}
