@@ -7,3 +7,4 @@ https://www.youtube.com/watch?v=4j3wrgitAvM
 - It's possible to change the location of the subtitles.
 - List of all available languages.
 - Jump to the specified time from the selected subtitle row.
+- Possibility to save selected subtitles.

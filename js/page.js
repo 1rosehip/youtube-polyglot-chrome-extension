@@ -53,6 +53,33 @@
     };
 
     /**
+     * get HTML of save / remove button
+     * @param {string} langCode
+     * @param {number} startTime
+     * @return {string}
+     */
+    var getSavedRemveHTML = function(langCode, startTime){
+
+        var html = '';
+        html += '<span class="yl-chrome-ext-saved-remove">';
+        html += '<span class="yl-chrome-ext-saved-item">Saved</span>';
+        html += '<span class="yl-chrome-ext-remove-item" data-type="yl-chrome-ext-remove-item" data-code="' + langCode + '" data-start="' + startTime + '">Remove</span>';
+        html += '</span>';
+        return html;
+    };
+
+    /**
+     * get save item button HTML
+     * @param {string} langCode
+     * @param {number} startTime
+     * @return {string}
+     */
+    var getSaveBtnHTML = function(langCode, startTime){
+
+        return '<a href="#" title="" class="yl-chrome-ext-save-srt" data-type="yl-chrome-ext-save-srt" data-start="' + startTime + '" data-code="' + langCode + '">Save</a>';
+    };
+
+    /**
      * render the specified language
      * @param {object} srt
      * @param {string} langCode
@@ -65,28 +92,55 @@
      */
     var renderLang = function(srt, langCode){
 
-        var $langContent = $('<div class="yl-chrome-ext-lang-content" data-type="yl-chrome-ext-lang-content" data-code="' + langCode + '"></div>');
+        var youtubeID = getParameterByName('v');
 
-        $(srt).find('text').each(function(index){
+        //get from storage
+        chrome.storage.sync.get('savedSubtitles', function(savedSubtitles){
 
-            var $this = $(this);
+            var videoSubtitles = [];
 
-            var start = Number($this.attr('start')) || 0;
-            var dur = Number($this.attr('dur')) || 0;
-            var end = start + dur;
-            var content = $this.text();
+            if(savedSubtitles && savedSubtitles.savedSubtitles[youtubeID] && savedSubtitles.savedSubtitles[youtubeID].length > 0){
+                videoSubtitles = savedSubtitles.savedSubtitles[youtubeID];
+            }
 
-            var html = '';
-            html += '<div class="yl-chrome-ext-srt-item" data-type="yl-chrome-ext-srt-item" data-start="' + start + '">';
-            html += '<div class="yl-chrome-ext-srt-item-top">' + index + '). ' + start.toFixed(3) + ' - ' + end.toFixed(3) + '</div>';
-            html += '<div class="yl-chrome-ext-srt-item-content">' + content + '</div>';
-            html += '</div>';
+            var $langContent = $('<div class="yl-chrome-ext-lang-content" data-type="yl-chrome-ext-lang-content" data-code="' + langCode + '"></div>');
 
-            $langContent.append($(html));
+            $(srt).find('text').each(function(index){
+
+                var $this = $(this);
+
+                var start = Number($this.attr('start')) || 0;
+                var dur = Number($this.attr('dur')) || 0;
+                var end = start + dur;
+                var content = $this.text();
+
+                //is this item saved?
+                var savedItem = findSavedSubtitle(videoSubtitles, start, langCode);
+
+                var html = '';
+                html += '<div class="yl-chrome-ext-srt-item" data-type="yl-chrome-ext-srt-item" data-start="' + start + '">';
+
+                html += '<div class="yl-chrome-ext-srt-item-top">';
+                html += '<span>' + index + '). ' + start.toFixed(3) + ' - ' + end.toFixed(3) + '</span>';
+
+                if(savedItem){
+                    html += getSavedRemveHTML(langCode, start);
+                }
+                else{
+                    html += getSaveBtnHTML(langCode, start);
+                }
+
+                html += '</div>';
+
+                html += '<div class="yl-chrome-ext-srt-item-content">' + content + '</div>';
+                html += '</div>';
+
+                $langContent.append($(html));
+            });
+
+            var $tabs = $('[data-type="yl-chrome-ext-tabs"]');
+            $tabs.append($langContent);
         });
-
-        var $tabs = $('[data-type="yl-chrome-ext-tabs"]');
-        $tabs.append($langContent);
     };
 
     /* ========================= LANGUAGES : GET DATA ========================= */
@@ -148,6 +202,115 @@
         else{
             callback();
         }
+    };
+
+    /* ========================= SUBTITLES DATA ACTIONS ========================= */
+
+    /**
+     * find saved subtitle
+     * @param {Array.<object> videoSubtitles}
+     * @param {number} startTime
+     * @param {string} langCode
+     * @return {object}
+     */
+    var findSavedSubtitle = function(videoSubtitles, startTime, langCode){
+
+        for(var i=0; i<videoSubtitles.length; i++){
+
+            if(videoSubtitles[i].start === startTime && videoSubtitles[i].lang === langCode){
+                return videoSubtitles[i];
+            }
+        }
+
+        return null;
+    };
+
+    /**
+     * save subtitles
+     * @param {number} startTime
+     * @param {string} text
+     * @param {string} langCode
+     * savedSubtitles = {
+     *    youtubeID: [
+     *      {}, {}, {}, ...
+     *    ]
+     * }
+     */
+    var saveSubtitles = function(startTime, text, langCode){
+
+        var youtubeID = getParameterByName('v');
+
+        //get from storage
+        chrome.storage.sync.get(function(options){
+
+            var savedSubtitles = options.savedSubtitles || {};
+            var isFound = false;
+
+            if(!savedSubtitles[youtubeID]){
+                savedSubtitles[youtubeID] = [];
+            }
+
+            for(var i=0; i<savedSubtitles[youtubeID].length; i++){
+
+                if(savedSubtitles[youtubeID][i].start === startTime && savedSubtitles[youtubeID][i].lang === langCode){
+                    isFound = true;
+                    break;
+                }
+            }
+
+            if(!isFound) {
+                savedSubtitles[youtubeID].push({
+                    start: startTime,
+                    text: text,
+                    lang: langCode
+                });
+            }
+
+            //save saves subtitles
+            chrome.storage.sync.set({
+                savedSubtitles: savedSubtitles
+            });
+        });
+    };
+
+    /**
+     * remove saved subtitle
+     * @param {number} startTime
+     * @param {string} langCode
+     */
+    var removeSubtitle = function(startTime, langCode){
+
+        var youtubeID = getParameterByName('v');
+
+        //get from storage
+        chrome.storage.sync.get(function(options){
+
+            var savedSubtitles = options.savedSubtitles || {};
+            var foundIndex = -1;
+
+            if(!savedSubtitles[youtubeID]){
+                savedSubtitles[youtubeID] = [];
+            }
+
+            for(var i=0; i<savedSubtitles[youtubeID].length; i++){
+
+                if(savedSubtitles[youtubeID][i].start === startTime && savedSubtitles[youtubeID][i].lang === langCode){
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if(foundIndex !== -1) {
+
+                savedSubtitles[youtubeID].splice(foundIndex, 1);
+
+                //save saves subtitles
+                chrome.storage.sync.set({
+                    savedSubtitles: savedSubtitles
+                });
+            }
+
+        });
     };
 
     /* ========================= COMMON ========================= */
@@ -257,6 +420,45 @@
         });
 
         /**
+         * on save subtitle btn click
+         * saves: subtitle text
+         * youtube video id
+         * youtube video time
+         */
+        $(document).on('click', '[data-type="yl-chrome-ext-save-srt"]', function(e){
+
+            e.preventDefault();
+
+            var $this = $(this);
+            var langCode = $this.attr('data-code');
+            var start = Number($this.attr('data-start')) || 0;
+            var text = $.trim($this.parents('[data-type="yl-chrome-ext-srt-item"]').find('.yl-chrome-ext-srt-item-content').text());
+
+            saveSubtitles(start, text, langCode);
+
+            $this.replaceWith(getSavedRemveHTML(langCode, start));
+        });
+
+        /**
+         * on remove saved item
+         * saves: subtitle text
+         * youtube video id
+         * youtube video time
+         */
+        $(document).on('click', '[data-type="yl-chrome-ext-remove-item"]', function(e){
+
+            e.preventDefault();
+
+            var $this = $(this);
+            var langCode = $this.attr('data-code');
+            var startTime = Number($this.attr('data-start')) || 0;
+
+            removeSubtitle(startTime, langCode);
+
+            $this.parents('.yl-chrome-ext-saved-remove').replaceWith(getSaveBtnHTML(langCode, startTime));
+        });
+
+        /**
          * chrome runtime messages
          */
         chrome.runtime.onMessage.addListener(
@@ -290,6 +492,9 @@
      * on window load
      */
     $(window).on('load', function(){
+
+        //chrome.storage.sync.clear();
+        //chrome.storage.local.clear();
 
         /**
          * param {boolean} isAvailable

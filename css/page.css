@@ -50,8 +50,23 @@
     background: #eef8fb;
 }
 
+
+.yl-chrome-ext-save-srt{
+    margin-left: auto;
+    color: rgb(252, 13, 28);
+    text-decoration: none;
+    display: none;
+}
+
+.yl-chrome-ext-srt-item:hover .yl-chrome-ext-save-srt{
+    display: inline-block;
+}
+
 .yl-chrome-ext-srt-item-top{
     color: rgba(17, 17, 17, 0.6);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
 }
 
 .yl-chrome-ext-tabs{
@@ -61,3 +76,23 @@
 .yl-chrome-ext-srt-item-content{
     font-size: 12px;
 }
+
+.yl-chrome-ext-saved-remove{
+    margin-left: auto;
+    display: inline-block;
+}
+
+
+.yl-chrome-ext-remove-item{
+    color: rgb(252, 13, 28);
+    display: inline-block;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+
+.yl-chrome-ext-saved-item{
+    color: #039203;
+    display: inline-block;
+}
+
