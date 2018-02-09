@@ -1,0 +1,12 @@
+.row{
+    width: 200px;
+}
+
+.title{
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+label{
+    display: block;
+}

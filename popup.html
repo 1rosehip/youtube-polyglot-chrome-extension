@@ -2,12 +2,22 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Youtube Chrome Extension</title>
+        <title>Youtube Polyglot Chrome Extension</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link href="css/popup.css" media="all" rel="stylesheet" />
     </head>
     <body>
-        <div id="test">Youtube Chrome Extension</div>
+        <div class="row">
+            <div class="title">Location:</div>
+            <label>
+                <input type="radio" value="0" name="location" checked /> To the right of the video
+            </label>
+            <label>
+                <input type="radio" value="1" name="location" /> Below the video
+            </label>
+        </div>
+
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/popup.js"></script>
     </body>

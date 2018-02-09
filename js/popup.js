@@ -2,12 +2,44 @@
     'use strict';
 
     /**
+     * restore the settings from the storage
+     */
+    var restoreSettings = function(){
+
+        chrome.storage.sync.get('location', function(item){
+
+            if(item){
+                var location = Number(item.location) || 0;
+                $('input[name="location"][value="' + location + '"]').prop('checked', true);
+            }
+        });
+    };
+
+    /**
      * init events
      */
     var initEvents = function(){
 
-        $('#test').on('click', function(){
-            console.log('here');
+        $('input[name="location"]').on('change', function(){
+
+            var locationID = Number($(this).val()) || 0;
+
+            //save the location in the storage
+            chrome.storage.sync.set({
+                location: locationID
+            });
+
+            //change the location in UI
+            chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+
+                if(tabs && tabs.length > 0){
+
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        'message': 'location',
+                        'location': locationID
+                    });
+                }
+            });
         });
     };
 
@@ -19,9 +51,8 @@
         //init events
         initEvents();
 
-        console.log('load');
-        console.log($('#test').length);
-        //console.log($('body').html());
+        //restore the settings from the storage
+        restoreSettings();
     });
 
 })(jQuery);

@@ -35,8 +35,16 @@
             $btns.append($(html));
         });
 
-        //$('#info').append($langs);
-        $('#related').prepend($langs);
+        chrome.storage.sync.get('location', function(options){
+
+            var path = '#related';
+
+            if(options && options.location === 1){
+                path = '#info';
+            }
+
+            $(path).prepend($langs);
+        });
     };
 
     /**
@@ -243,6 +251,32 @@
             });
         });
 
+        /**
+         * chrome runtime messages
+         */
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {
+
+                /**
+                 * change the location
+                 */
+                if(request.message === 'location'){
+
+                    switch(request.location){
+
+                        case 1: {
+                            $('.yl-chrome-ext-langs').appendTo("#info");
+                            break;
+                        }
+
+                        default: {
+                            $('.yl-chrome-ext-langs').prependTo("#related");
+                            break;
+                        }
+                    }
+                }
+            }
+        );
     };
 
     /* ========================= ENTRY POINT ========================= */
@@ -271,7 +305,6 @@
                 }
             }
         });
-
     });
 
 })(jQuery);
