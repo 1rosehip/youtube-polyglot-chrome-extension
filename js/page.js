@@ -17,34 +17,39 @@
      */
     var renderAvailableLangs = function(srt){
 
-        var $langs = $('<div class="yl-chrome-ext-langs"><div class="yl-chrome-ext-btns" data-type="yl-chrome-ext-btns"></div><div class="yl-chrome-ext-tabs" data-type="yl-chrome-ext-tabs"></div></div>');
-        var $btns = $langs.find('[data-type="yl-chrome-ext-btns"]');
+        var $tracks = $(srt).find('track');
 
-        $(srt).find('track').each(function(){
+        if($tracks.length > 0) {
 
-            var $this = $(this);
+            var $langs = $('<div class="yl-chrome-ext-langs"><div class="yl-chrome-ext-btns" data-type="yl-chrome-ext-btns"></div><div class="yl-chrome-ext-tabs" data-type="yl-chrome-ext-tabs"></div></div>');
+            var $btns = $langs.find('[data-type="yl-chrome-ext-btns"]');
 
-            var id = $this.attr('id');
-            var name = $this.attr('name');
-            var lang_code = $this.attr('lang_code');
-            var lang_original = $this.attr('lang_original');
-            var lang_translated = $this.attr('lang_translated');
+            $tracks.each(function () {
 
-            var html = '<div class="yl-chrome-ext-lang-btn" data-type="yl-chrome-ext-lang-btn" data-code="' + lang_code + '">' + lang_original + '</div>';
+                var $this = $(this);
 
-            $btns.append($(html));
-        });
+                var id = $this.attr('id');
+                var name = $this.attr('name');
+                var lang_code = $this.attr('lang_code');
+                var lang_original = $this.attr('lang_original');
+                var lang_translated = $this.attr('lang_translated');
 
-        chrome.storage.sync.get('location', function(options){
+                var html = '<div class="yl-chrome-ext-lang-btn" data-type="yl-chrome-ext-lang-btn" data-code="' + lang_code + '">' + lang_original + '</div>';
 
-            var path = '#related';
+                $btns.append($(html));
+            });
 
-            if(options && options.location === 1){
-                path = '#info';
-            }
+            chrome.storage.sync.get('location', function (options) {
 
-            $(path).prepend($langs);
-        });
+                var path = '#related';
+
+                if (options && options.location === 1) {
+                    path = '#info';
+                }
+
+                $(path).prepend($langs);
+            });
+        }
     };
 
     /**
