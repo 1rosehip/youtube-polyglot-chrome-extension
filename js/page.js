@@ -6,7 +6,7 @@
     var LOAD_TRIES_MAX = 10;
     var loadStep = 1000;
 
-    /* ========================= LANGUAGES : RENDER ========================= */
+    /* ========================= RENDERS ========================= */
 
     /**
      * render available languages
@@ -39,15 +39,16 @@
                 $btns.append($(html));
             });
 
+            //add langs to page according the extension settings
             chrome.storage.sync.get('location', function (options) {
 
-                var path = '#related';
-
                 if (options && options.location === 1) {
-                    path = '#info';
+                    $('#info').prepend($langs);
+                }
+                else{
+                    $('#related').prepend($langs);
                 }
 
-                $(path).prepend($langs);
             });
         }
     };
@@ -60,10 +61,12 @@
      */
     var getSavedRemveHTML = function(langCode, startTime){
 
+        var youtubeID = getParameterByName('v');
+
         var html = '';
-        html += '<span class="yl-chrome-ext-saved-remove">';
+        html += '<span class="yl-chrome-ext-saved-remove" data-code="' + langCode + '" data-start="' + startTime + '">';
         html += '<span class="yl-chrome-ext-saved-item">Saved</span>';
-        html += '<span class="yl-chrome-ext-remove-item" data-type="yl-chrome-ext-remove-item" data-code="' + langCode + '" data-start="' + startTime + '">Remove</span>';
+        html += '<span class="yl-chrome-ext-remove-item" data-youtube="' + youtubeID + '" data-type="yl-chrome-ext-remove-item" data-code="' + langCode + '" data-start="' + startTime + '">Remove</span>';
         html += '</span>';
         return html;
     };
@@ -78,6 +81,91 @@
 
         return '<a href="#" title="" class="yl-chrome-ext-save-srt" data-type="yl-chrome-ext-save-srt" data-start="' + startTime + '" data-code="' + langCode + '">Save</a>';
     };
+
+    /**
+     * render saved subtitles
+     */
+    var renderSavedSubtitles = function() {
+
+        //remove saved subtitles if exist on the page
+        $('.yl-chrome-ext-saved-box').remove();
+
+        //get from storage
+        chrome.storage.sync.get('savedSubtitles', function (savedSubtitles) {
+
+            if(savedSubtitles.savedSubtitles){
+
+                var pageYoutubeID = getParameterByName('v');
+                var savedItems = [];
+
+                var html = '';
+                html += '<div class="yl-chrome-ext-saved-box">';
+                html += '<h3>Saved Subtitles</h3>';
+
+                for(var youtubeID in savedSubtitles.savedSubtitles){
+
+                    var videoSavedItems = savedSubtitles.savedSubtitles[youtubeID];
+
+                    for(var i=0; i<videoSavedItems.length; i++){
+
+                        var savedItem = videoSavedItems[i];
+                        savedItems.push(savedItem);
+
+                        html += '<div class="yl-chrome-ext-saved-box-item">';
+
+                        if(pageYoutubeID === youtubeID) {
+                            html += '<span class="yl-chrome-ext-saved-box-span" data-type="yl-chrome-ext-saved-box-span" data-start="' + savedItem.start + '" data-code="' + savedItem.lang + '">';
+
+                            html += '<span class="yl-chrome-ext-saved-box-actions">';
+                            html += '<span class="yl-chrome-ext-saved-box-index">' + (i+1) + ').</span>';
+                            html += '<span class="yl-chrome-ext-remove-item" data-youtube="' + youtubeID + '" data-type="yl-chrome-ext-remove-item" data-code="es" data-start="76.3">Remove</span>';
+                            html += '</span>';
+
+                            html += '<span>' + savedItem.text + '</span>';
+                            html += '</span>';
+                        }
+                        else{
+                            html += '<a class="yl-chrome-ext-saved-box-link" href="https://www.youtube.com/watch?v=' + youtubeID + '&t=' + savedItem.start.toFixed(0) + '" title="">';
+
+                            html += '<span class="yl-chrome-ext-saved-box-actions">';
+                            html += '<span class="yl-chrome-ext-saved-box-index">' + (i+1) + ').</span>';
+                            html += '<span class="yl-chrome-ext-remove-item" data-youtube="' + youtubeID + '" data-type="yl-chrome-ext-remove-item" data-code="es" data-start="76.3">Remove</span>';
+                            html += '</span>';
+
+                            html += '<span>' + savedItem.text + '</span>';
+                            html += '</a>';
+                        }
+
+                        html += '</div>';
+                    }
+                }
+
+                html += '</div>';
+
+                if(savedItems.length > 0) {
+
+                    //add saved subtitles to page according the extension settings
+                    chrome.storage.sync.get('location', function (options) {
+
+                        var $langs = $('.yl-chrome-ext-langs');
+
+                        if ($langs.length > 0) {
+                            $(html).insertAfter($langs);
+                        }
+                        else {
+                            if (options && options.location === 1) {
+                                $('#info').prepend($(html));
+                            }
+                            else {
+                                $('#related').prepend($(html));
+                            }
+                        }
+
+                    });
+                }
+            }
+        });
+    }
 
     /**
      * render the specified language
@@ -99,7 +187,7 @@
 
             var videoSubtitles = [];
 
-            if(savedSubtitles && savedSubtitles.savedSubtitles[youtubeID] && savedSubtitles.savedSubtitles[youtubeID].length > 0){
+            if(savedSubtitles && savedSubtitles.savedSubtitles && savedSubtitles.savedSubtitles[youtubeID] && savedSubtitles.savedSubtitles[youtubeID].length > 0){
                 videoSubtitles = savedSubtitles.savedSubtitles[youtubeID];
             }
 
@@ -139,6 +227,7 @@
             });
 
             var $tabs = $('[data-type="yl-chrome-ext-tabs"]');
+
             $tabs.append($langContent);
         });
     };
@@ -270,17 +359,19 @@
             chrome.storage.sync.set({
                 savedSubtitles: savedSubtitles
             });
+
+            //rerender saved subtitles
+            renderSavedSubtitles();
         });
     };
 
     /**
      * remove saved subtitle
+     * @param {string} youtubeID
      * @param {number} startTime
      * @param {string} langCode
      */
-    var removeSubtitle = function(startTime, langCode){
-
-        var youtubeID = getParameterByName('v');
+    var removeSubtitle = function(youtubeID, startTime, langCode){
 
         //get from storage
         chrome.storage.sync.get(function(options){
@@ -310,6 +401,8 @@
                 });
             }
 
+            //rerender saved subtitles
+            renderSavedSubtitles();
         });
     };
 
@@ -420,6 +513,21 @@
         });
 
         /**
+         * on saved subtitle click
+         */
+        $(document).on('click', '[data-type="yl-chrome-ext-saved-box-span"]', function(e){
+
+            e.preventDefault();
+
+            var $this = $(this);
+            var youtubeID = getParameterByName('v');
+            var start = Number($this.attr('data-start')) || 0;
+            $('video').each(function(){
+                $(this).get(0).currentTime = start;
+            });
+        });
+
+        /**
          * on save subtitle btn click
          * saves: subtitle text
          * youtube video id
@@ -452,10 +560,11 @@
             var $this = $(this);
             var langCode = $this.attr('data-code');
             var startTime = Number($this.attr('data-start')) || 0;
+            var youtubeID = $this.attr('data-youtube');
 
-            removeSubtitle(startTime, langCode);
+            removeSubtitle(youtubeID, startTime, langCode);
 
-            $this.parents('.yl-chrome-ext-saved-remove').replaceWith(getSaveBtnHTML(langCode, startTime));
+            $('.yl-chrome-ext-tabs .yl-chrome-ext-saved-remove[data-code="' + langCode + '"][data-start="' + startTime + '"]').replaceWith(getSaveBtnHTML(langCode, startTime));
         });
 
         /**
@@ -472,12 +581,12 @@
                     switch(request.location){
 
                         case 1: {
-                            $('.yl-chrome-ext-langs').appendTo("#info");
+                            $('.yl-chrome-ext-langs, .yl-chrome-ext-saved-box').appendTo("#info");
                             break;
                         }
 
                         default: {
-                            $('.yl-chrome-ext-langs').prependTo("#related");
+                            $('.yl-chrome-ext-saved-box, .yl-chrome-ext-langs').prependTo("#related");
                             break;
                         }
                     }
@@ -509,6 +618,9 @@
 
                     //init events
                     initEvents();
+
+                    //render saved subtitles
+                    renderSavedSubtitles();
 
                     //get available languages
                     getAvailableLangs(youtubeID);

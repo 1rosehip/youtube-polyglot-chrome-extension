@@ -7,11 +7,12 @@ https://www.youtube.com/watch?v=4j3wrgitAvM
 - It's possible to change the location of the subtitles.
 - List of all available languages.
 - Jump to the specified time from the selected subtitle row.
-- Possibility to save selected subtitles.
+- Possibility to save selected subtitles from all videos.
 
 TODO:
 - youtube cache issue
 - check without adblocks
-- change lang code to be array of items + lang name
-- render saved items
+- jQuery no conflict
 - collections for the saved items
+- add to the popup possibility to search on google only cc videos
+- open in google translation button
