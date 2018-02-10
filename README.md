@@ -13,7 +13,5 @@ https://www.youtube.com/watch?v=4j3wrgitAvM
 TODO:
 - youtube cache issue
 - check without adblocks
-- jQuery no conflict
 - collections for the saved items
-- add to the popup possibility to search on google only cc videos
 - open in google translation button

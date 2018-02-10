@@ -60,6 +60,19 @@
                 e.preventDefault();
             }
         });
+
+        $('#search-tb').on('keyup', function(evt) {
+
+            if (evt.which === 27 || evt.keyCode === 27) {
+                evt.preventDefault();
+                $('#search-tb').val('');
+            }
+
+            if (evt.which === 13 || evt.keyCode == 13) {
+                evt.preventDefault();
+                $('#search-btn').get(0).click();
+            }
+        });
     };
 
     /**
