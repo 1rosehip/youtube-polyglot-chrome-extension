@@ -6,7 +6,7 @@ html, body{
 }
 
 .row{
-    width: 250px;
+    width: 270px;
 }
 
 .title{
@@ -41,4 +41,45 @@ a{
 
 .bug-img{
     width: 10px;
+}
+
+.search-row{
+    border-bottom: 1px dotted #ccc;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.search-box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+#search-tb{
+    width: 100%;
+    height: 25px;
+    border: 1px solid #b0c0c3;
+    outline: none;
+    border-radius: 3px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 3px 10px;
+    background: #f3f3f3;
+}
+
+#search-tb:focus{
+    outline: none;
+    border: 1px solid #b0c0c3;
+}
+
+#search-btn{
+    margin-left: 5px;
+    background: #16689c;
+    color: #fff;
+    padding: 3px 5px;
+    border-radius: 3px;
+    font-size: 12px;
 }

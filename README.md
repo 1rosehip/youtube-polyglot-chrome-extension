@@ -8,6 +8,7 @@ https://www.youtube.com/watch?v=4j3wrgitAvM
 - List of all available languages.
 - Jump to the specified time from the selected subtitle row.
 - Possibility to save selected subtitles from all videos.
+- Possibility to search on youtube videos with subtitles
 
 TODO:
 - youtube cache issue

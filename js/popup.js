@@ -20,6 +20,9 @@
      */
     var initEvents = function(){
 
+        /**
+         * on location change
+         */
         $('input[name="location"]').on('change', function(){
 
             var locationID = Number($(this).val()) || 0;
@@ -40,6 +43,22 @@
                     });
                 }
             });
+        });
+
+        /**
+         * on search button click
+         */
+        $('#search-btn').on('click', function(e){
+
+            var val = $.trim($('#search-tb').val());
+
+            if(val !== ''){
+
+                $(this).attr('href', 'https://www.youtube.com/results?search_query=' + val + '%2Ccc');
+            }
+            else{
+                e.preventDefault();
+            }
         });
     };
 
