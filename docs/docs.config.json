@@ -1,0 +1,7 @@
+  [
+    {
+      "source": "src/js/page/page.jsx",
+      "title": "Page",
+      "output": "page.html"
+    }
+  ]

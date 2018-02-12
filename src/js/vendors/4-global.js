@@ -1,0 +1,1 @@
+var ReactDOM = preactCompat, React = preactCompat;

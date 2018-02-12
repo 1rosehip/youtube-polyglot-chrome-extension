@@ -1,0 +1,125 @@
+@!(data)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>@(data.title) | Documentation</title>
+        <link rel="stylesheet" type="text/css" href="../css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="../css/styles.css">
+        <meta name="viewport" content="width=device-width" />
+    </head>
+    <body>
+        <div class="page-top-bar">
+            <a href="../docs.html" title="">
+                <img src="../img/logo.png" />
+                Documentation
+            </a>
+        </div>
+
+        <div class="inner-page">
+            <div class="side-menu">
+                <h1 class="inner-page-title">@(data.title)</h1>
+
+                @for(var index = 0; index < data.items.length; index++) {
+                    @{
+                        var counter = index + 1;
+                        var item = data.items[index];
+                    }
+                    <div class="side-menu-item" data-type="side-menu-item" data-source="@(item.path.replace(/\\/g, ''))">
+                        @(counter). <a href="#@(item.path.replace(/\\/g, ''))" title="">@(item.displayName ? item.displayName : 'Untitled')</a>
+                    </div>
+                }
+
+            </div>
+            <div class="content">
+
+                <div class="doc-list">
+                    @for(var index = 0; index < data.items.length; index++) {
+                        @{
+                            var item = data.items[index];
+                        }
+                        <div class="doc-list-item hidden" data-path="@(item.path.replace(/\\/g, ''))">
+
+                            <!-- Common -->
+                            <div class="title">
+                                <a href="../../@(item.path)" target="_blank" title="">@(item.displayName ? item.displayName : 'Untitled')</a>
+                            </div>
+                            <div class="desc" data-type="desc">@(item.description ? item.description.replace(/</g, '&lt;') : 'No description')</div>
+
+                            @if(item.props){
+
+                                <!-- Props -->
+                                <div class="props">
+                                    <div class="props-title">Props</div>
+
+                                    <ul class="props-ul">
+                                        @for(var key in item.props){
+                                            @{ var prop = item.props[key]; }
+                                        <li><span class="prop-name">@key</span> - <span class="prop-type">@(prop.type.raw)</span></li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+
+                            <!-- Methods -->
+                            <div class="methods">
+                                <div class="methods-title">Methods</div>
+
+                                @for(var m = 0; m < item.methods.length; m++){
+
+                                    @{
+                                        var method = item.methods[m];
+                                        var returns = '';
+
+                                        if(method.returns && method.returns.type){
+                                            returns += method.returns.type.name;
+
+                                            if(method.returns.description){
+                                                returns += ' - ' + method.returns.description;
+                                            }
+                                        }
+                                    }
+
+                                    <div class="method">
+                                        <div class="method-name">@(method.name)</div>
+                                        <div class="method-desc">@(method.description)</div>
+
+                                        <div class="method-params">
+                                            @if(method.params.length > 0){
+                                                <div class="method-params-title">Parameters:</div>
+                                                <ul>
+                                                @for(var p = 0; p < method.params.length; p++){
+                                                    @{ var methodParam = method.params[p]; }
+                                                    <li class="method-param">
+                                                        <span class="method-param-name">@(methodParam.name)</span>
+
+                                                        @if(methodParam.type){
+                                                            <span class="method-param-type">- @(methodParam.type.name)</span>
+                                                        }
+
+                                                        @if(methodParam.description){
+                                                            <span class="method-param-description"> - @(methodParam.description)</span>
+                                                        }
+                                                    </li>
+                                                }
+                                                </ul>
+                                            }
+                                        </div>
+
+                                        <div class="method-returns">
+                                            <div class="method-returns-title">Returns:</div>
+                                            <div class="method-returns-content">@(returns ? returns : 'void')</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/jquery-3.3.1.min.js"></script>
+        <script src="../js/inner-page.js"></script>
+    </body>
+</html>

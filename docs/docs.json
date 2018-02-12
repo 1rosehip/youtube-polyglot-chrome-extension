@@ -1,0 +1,17 @@
+{
+  "src/js/page/page.jsx": {
+    "description": "Page component - the main component of extension.\nCreated: 02/12/2018\nUsage:\n         <Page\n             youtubeID=\"nHN92cVgmm0\"\n         />",
+    "displayName": "Page",
+    "methods": [],
+    "props": {
+      "youtubeID": {
+        "type": {
+          "name": "custom",
+          "raw": "PropTypes.string"
+        },
+        "required": false,
+        "description": ""
+      }
+    }
+  }
+}

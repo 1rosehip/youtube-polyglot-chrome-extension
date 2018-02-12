@@ -15,8 +15,8 @@
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/watch*"],
-      "css": ["css/page.css"],
-      "js": ["js/jquery-3.3.1.min.js", "js/page.js"]
+      "css": ["css/page.min.css"],
+      "js": ["js/preact-vendors.min.js", "js/page.min.js"]
     }
   ],
   "permissions": [

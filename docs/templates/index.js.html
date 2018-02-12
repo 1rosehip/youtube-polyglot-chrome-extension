@@ -1,0 +1,29 @@
+@!(data)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Documentation</title>
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <meta name="viewport" content="width=device-width" />
+    </head>
+    <body>
+        <h1>
+            <img src="img/logo.png" />
+            Documentation
+        </h1>
+
+        <div class="hp-grid">
+        @for(var i=0; i<data.length; i++){
+
+            @{
+                var configItem = data[i];
+            }
+            <div class="hp-grid-item">
+                <a href="html/@(configItem.output)" title="">@(configItem.title)</a>
+            </div>
+        }
+        </div>
+    </body>
+</html>

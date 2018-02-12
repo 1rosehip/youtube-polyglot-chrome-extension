@@ -1,0 +1,60 @@
+{
+  "name": "youtube-polyglot-chrome-extension",
+  "version": "1.0.0",
+  "description": "Youtube Polyglot Chrome Extension",
+  "scripts": {
+    "vendors": "node ./build/vendors.js",
+
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+
+    "predocs": "react-docgen ./src/js/page --pretty -o ./docs/docs.json",
+    "docs": "node ./build/docs.js",
+
+    "page": "rollup src/js/page/index.jsx -o ./dist/js/page.min.js -c --watch --css=./dist/css/page.min.css"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest/globals.js"
+    ],
+    "moduleNameMapper": {
+      "^react$": "preact-compat",
+      "^react-dom$": "preact-compat"
+    }
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.0.4",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-require-ignore": "^0.1.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-preact": "^1.1.0",
+    "bliss": "^1.0.1",
+    "chai": "^4.1.2",
+    "colors": "^1.1.2",
+    "concat-files": "^0.1.1",
+    "cssnano": "^3.10.0",
+    "jest": "^22.0.4",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-nested": "^3.0.0",
+    "postcss-simple-vars": "^4.1.0",
+    "preact": "^8.2.7",
+    "preact-compat": "^3.17.0",
+    "preact-jsx-chai": "^2.2.1",
+    "preact-render-spy": "^1.2.1",
+    "preact-test-utils": "^0.1.3",
+    "prop-types": "^15.6.0",
+    "react-docgen": "^2.20.0",
+    "regenerator-runtime": "^0.11.1",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-postcss": "^0.5.5",
+    "rollup-plugin-uglify": "^2.0.1",
+    "sinon": "^4.2.2"
+  }
+}
