@@ -34,8 +34,8 @@ let postCSSOptions = {
         cssnext({ warnForDuplicates: false, }),
 
         cssnano({zindex: false}),
-    ]
-    //sourceMap: false,
+    ],
+    sourceMap: false,
 };
 
 if(cssFile){

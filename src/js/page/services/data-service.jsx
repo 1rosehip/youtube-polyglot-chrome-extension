@@ -1,38 +1,38 @@
 class DataService{
 
     /**
-     * get data from db and update state
+     * get available languages
      * @param {Function=} done
      * @param {Function=} err
-     * @param {string=} purl
-     * @param {string} type - shared / private / cart
+     * @param {string} youtubeID
      */
-    updateData(done, err, purl, type){
+    getAvailableLangs(done, err, youtubeID){
 
-        let url = 'aaa.ashx';
-        url += this.getQSData(purl, type);
+        let url = 'https://video.google.com/timedtext?type=list&v=' + youtubeID;
 
         //disable cache
-        var myHeaders = new Headers();
-        myHeaders.append('pragma', 'no-cache');
-        myHeaders.append('cache-control', 'no-cache');
+        var myHeaders = new Headers({
+            //'Access-Control-Allow-Origin':'*',
+            //'Content-Type': 'multipart/form-data'
+            'content-type': 'application/json'
+        });
+
+        //myHeaders.append('pragma', 'no-cache');
+        //myHeaders.append('cache-control', 'no-cache');
 
         fetch(url, {
             method: 'GET',
-            headers: myHeaders,
-            credentials: 'same-origin' //'include', 'omit'
+            mode: 'cors',
+            //headers: myHeaders,
+            //credentials: 'omit' //'same-origin', 'include', 'omit'
         })
-            .then(res => res.json())
+            //.then(res => res.json())
             .then(data => {
-
-                if(data && !data.IsValid){
-                    err(data.StatusCode);
-                }
-                else {
-                    done(data);
-                }
+                console.log(data);
+                done(data);
             })
             .catch(function(err) {
+                console.log('Youtube Extenstion - getAvailableLangs:', err);
                 err();
             });
     }

@@ -1,6 +1,8 @@
 (function($){
     'use strict';
 
+    //https://stackoverflow.com/questions/16151018/npm-throws-error-without-sudo
+
     /* ========================= GLOBALS ========================= */
     var loadTries = 0;
     var LOAD_TRIES_MAX = 10;
